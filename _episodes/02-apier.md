@@ -31,7 +31,7 @@ keypoints:
 - API-er er som regel dokumenterte.
 - Åpner for å kunne automatisere og trekke ut data fra ulike systemer og kombinere dem
 
-![API](/fig/api-figur.png)
+![API](https://scriptotek.github.io/python-til-biblioteksarbeid/fig/api-figur.png)
 
 <!--
   Liten digresjon: [slipsomat](https://github.com/scriptotek/alma-slipsomat)
@@ -49,7 +49,7 @@ utviklet i 1997 | utviklet i 2001
 minner om html | avledet fra javascript
 mer komplisert | mindre komplisert
 
-![API](/fig/xml-json-all-time1-600x382.png)
+![API](https://scriptotek.github.io/python-til-biblioteksarbeid/fig/xml-json-all-time1-600x382.png)
 
 Generelt er JSON enklere å jobbe med, men begge formatene har sine styrker,
 og i praksis må en forholde seg til begge deler.
@@ -283,7 +283,7 @@ Når vi ser på XML-en ser vi at toppnivået heter "searchRetrieveResponse".
 Deretter følger "records" og "record". Denne noden er det flere av, så det er en liste.
 Hver "record"-node har en "recordData"-node som igjen har en "record"-node.
 
-![XML-strukturen til responsen](/fig/xml-response.png)
+![XML-strukturen til responsen](https://scriptotek.github.io/python-til-biblioteksarbeid/fig/xml-response.png)
 
 La oss prøve å navigere i XML-strukturen med Python.
 Først må vi importere `xmltodict`:
@@ -341,7 +341,7 @@ len(records)
 {: .challenge}
 
 > ## Oppgave 2: Hente ut leader fra den første MARC-posten
-> ![MARC](/fig/marc.png)
+> ![MARC](https://scriptotek.github.io/python-til-biblioteksarbeid/fig/marc.png)
 >
 > Vi har `records`, som er en liste. Du kan hente ut det første elementet fra listen
 > (altså den første MARC-posten) med `records[0]`.
