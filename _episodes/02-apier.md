@@ -18,21 +18,20 @@ keypoints:
 
 # Hva er et API?
 
-![API](/fig/api-figur.png)
-
-- API (application programming interface) eller *programmeringsgrensesnitt* på godt norsk,
-  et grensesnitt mellom ulike systemer.
-   - API-er kan være mellom forskjellige programmer på datamaskinen din eller mellom
-     webtjenester. Det siste kalles også web-API-er eller webservices / webtjenester,
-     men vi kommer bare til å kalle det API-er.
-   - «REST» eller «RESTful» er et buzzord fra en del år tilbake som fremdeles er mye brukt
-     i beskrivelser av API-er. De aller, aller fleste API-er følger disse prinsippene
-     i større eller mindre grad i dag, og det er ikke noe spesielt spennende ved dem.
-- Grensesnitt for å kommunisere mellom systemer ved hjelp av
-  - HTTP-kall: GET for å hente data, POST for å sende inn data
-  - Standardiserte dataformater som JSON og XML.
+- API (application programming interface) eller også *programmeringsgrensesnitt* på godt norsk –
+  et grensesnitt mot et system (f.eks biblioteksystemet ditt).
+    - I praksis skal vi bare se på web-API-er, altså API-er vi snakker med over internett.
+      Det finnes også API-er mellom programmer og annet på maskinen din.
+    - Hvis dere leser API-dokumentasjon kommer dere fort over betegnelsen «REST» eller «RESTful».
+      De aller, aller fleste API-er følger disse prinsippene i større eller mindre grad i dag,
+      og det er ikke noe spesielt spennende ved dem egentlig.
+    - Java-utviklere liker å snakke om "web service" (webtjeneste).
+      Tenk på det som et synonym for API.
+- API-er er som regel mye mer stabilt over tid enn selve systemene bak.
+- API-er er som regel dokumenterte.
 - Åpner for å kunne automatisere og trekke ut data fra ulike systemer og kombinere dem
-- Som regel rimelig stabile over tid (mer stabile enn f.eks. vanlige nettsider)
+
+![API](/fig/api-figur.png)
 
 <!--
   Liten digresjon: [slipsomat](https://github.com/scriptotek/alma-slipsomat)
@@ -43,6 +42,7 @@ keypoints:
 
 ### XML og JSON
 
+Nesten alle API-er returnerer data som XML og/eller JSON.
 `<xml>` | `{json}`
 ---|---
 utviklet i 1997 | utviklet i 2001
@@ -51,17 +51,19 @@ mer komplisert | mindre komplisert
 
 ![API](/fig/xml-json-all-time1-600x382.png)
 
-Generelt er JSON enklere å jobbe med,
-men begge formatene har sine styrker og i praksis må du forholde deg til begge deler.
+Generelt er JSON enklere å jobbe med, men begge formatene har sine styrker,
+og i praksis må en forholde seg til begge deler.
+
 
 # HTTP-forespørsler (HTTP-kall) med requests
 
-Vi begynner med å importere `requests`, som er et kodebibliotek for å gjøre HTTP-forespørsler (HTTP requests):
+Vi begynner med å importere `requests`, som er en Python-pakke (eller et Python-bibliotek)
+for å gjøre HTTP-forespørsler (HTTP requests):
 
 ~~~
 import requests
 ~~~
-{: .python}
+{: .language-python}
 
 HTTP-forespørsler er ekstremt lite mystisk – det er det vi gjør hver gang vi henter en nettside.
 For å illustrere dette kan vi begynne med å hente forsiden til BI med `requests` slik:
@@ -69,42 +71,38 @@ For å illustrere dette kan vi begynne med å hente forsiden til BI med `request
 ~~~
 requests.get('http://www.bi.no')
 ~~~
-{: .python}
+{: .language-python}
 
-Her kjører vi funksjonen `get()` fra `requests`-biblioteket,
-som igjen kaller et annet bibliotek som igjen kaller et system-API
+Her kjører vi funksjonen `get()` fra `requests`-pakken
+(requests-pakken kaller igjen et annet bibliotek som igjen kaller et system-API
 osv. osv. Lag på lag med komplisert nettverksfunksjonalitet
-som vi heldigvis slipper å forholde oss til!
-Det vi får ut igjen er et responsobjekt, som vi kan gi et eller annet navn,
-f.eks. "response":
+som vi heldigvis slipper å forholde oss til – puh!)
+Det vi får ut igjen fra `get()`-funksjonen er et responsobjekt.
+For å kunne bruke det videre «putter vi det i en variabel» som vi kaller "response":
 
 ~~~
 response = requests.get('http://www.bi.no')
 ~~~
-{: .python}
+{: .language-python}
 
+Men hva befinner seg inni dette objektet?
 Et objekt er en sekk som kan inneholde forskjellige ting.
 Vi kan liste ut hva objektet inneholder med `dir()`-funksjonen:
 
 ~~~
 dir(response)
 ~~~
-{: .python}
+{: .language-python}
 
-Her ser vi f.eks. at det ligger noe som heter "text", som er responsteksten vi
-har fått tilbake fra serveren.
-Selv om det går an å bruke `dir()` for å grave i et objekt er det i praksis ofte
-enklere å lese dokumentasjonen.
-
-Uansett har vi funnet ut at det er `response.text` vi er interessert i:
+Her ser vi f.eks. at det ligger noe som heter "text".
+La oss bruke `print()`-funksjonen for å se hva som ligger der:
 
 ~~~
-response.text
+print(response.text)
 ~~~
-{: .python}
+{: .language-python}
 
-
-Det vi får ut er det samme som vi ville fått ut hvis vi hadde
+Ser dere hva dette er? HTML! Det samme som vi ville fått ut hvis vi hadde
 [vist kildekoden til nettsiden](https://kb.iu.edu/d/agao) i nettleseren vår.
 
 <!--
@@ -119,7 +117,7 @@ from bs4 import BeautifulSoup
 parsed_html = BeautifulSoup(response.text, 'lxml')
 parsed_html.body.findAll('h2')
 ~~~
-{: .python}
+{: .language-python}
 
 Det vi gjør her er at vi bruker en funksjon som noen andre har laget,
 slik at vi slipper å skrive denne funksjonen.
@@ -127,7 +125,8 @@ slik at vi slipper å skrive denne funksjonen.
 
 I prinsippet kunne vi prøvd å trekke ut data fra HTML-koden, da er vi
 inne i det som kalles webscraping.
-Det er gjerne noe man tyr til hvis det ikke finnes et API.
+Det er gjerne noe en tyr til for å få ut data fra systemer som ikke tilbyr et API
+(eller ikke tilbyr dataene du trenger gjennom API-et).
 
 <!-- Eks: Hente åpningstider fra en Facebook-side. ResearchGate, Instagram eller andre kjipe nettsteder -->
 
@@ -140,11 +139,22 @@ Dette krever en eller annen form for autentisering, f.eks. en hemmelig nøkkel s
 
 Alt dette er bra!
 
-# Hente bibliografiske data fra Alma
+# Hente bibliografiske data fra API-et til et biblioteksystem
 
-Som eksempel på API skal vi hente ut bibliografiske poster over et SRU-API.
-SRU er en standard som de fleste biblioteksystemer støtter.
-Vi skal bruke Alma som eksempel.
+Som eksempel på API skal vi hente ut bibliografiske poster fra et API
+
+> ## [SRU](http://www.loc.gov/standards/sru/)
+> SRU er en standard søkeprotokoll fra Library of Congress som så godt som
+> alle biblioteksystemer støtter (Det er riktignok ikke alle bibliotek som
+> har *åpne* SRU-APIer, men mange har det). Et eksempel på en nettside
+> som snakker med SRU-APIer fra mange forskjellige bibliotek er
+> [Karlsruher Virtueller Katalog](http://kvk.bibliothek.kit.edu/).
+>
+> Hva betyr det at det er en standard søkeprotokoll? At parametrene er standardiserte,
+> så vi kan bruke de samme parameternavnene uansett hvilket biblioteksystem
+> vi snakker med. Selve søkefeltene (søkeindeksene) er imidlertid ikke standardiserte,
+> så de kan variere fra system til  system.
+{: .callout}
 
 <!-- Advarsel: MARC er ikke den enkleste datamodellen å jobbe med,
      og egentlig ikke det mest pedagogiske eksempelet å begynne med.
@@ -154,42 +164,39 @@ Vi skal bruke Alma som eksempel.
      Det finnes svært gode nettkurs for å lære programmering.
      -->
 
-Første spørsmål når vi skal bruke et API er: hvordan bruker vi det?
-
-Vi er interessert i å hente ut bibliografiske poster fra biblioteksystemet vårt,
-og vi skal bruke Alma som eksempel, men vi skal bruke SRU, som er en standardisert søkeprotokoll
-som støttes av de fleste biblioteksystemer.
-
-API-dokumentasjonen for Almas SRU-tjeneste finnes på
+Vi skal bruke Alma som eksempel. Da begynner vi typisk med å google "alma sru",
+og kommer vi til API-dokumentasjonen for Almas SRU-tjeneste på
 [https://developers.exlibrisgroup.com/alma/integrations/SRU](https://developers.exlibrisgroup.com/alma/integrations/SRU).
 
-La oss begynne med å prøve lenken «searchRetrieveResponse» under overskriften «Examples (in Alma's Guest sandbox environment)» helt nederst.
+I API-dokumentasjonen kan vi se om det er noen eksempler vi kan prøve rett ut av boksen.
+Under lenken «searchRetrieveResponse» under overskriften «Examples (in Alma's Guest sandbox environment)»
+helt nederst finner vi ett. Trykker vi på lenken gjør nettleseren vår en HTTP-forespørsel og vi får tilbake noe XML-data:
 
-Denne fører hit:
+<https://na01.alma.exlibrisgroup.com/view/sru/TR_INTEGRATION_INST?version=1.2&operation=searchRetrieve&recordSchema=marcxml&query=alma.all_for_ui=history&maximumRecords=3&startRecord=4>
 
-https://na01.alma.exlibrisgroup.com/view/sru/TR_INTEGRATION_INST?version=1.2&operation=searchRetrieve&recordSchema=marcxml&query=alma.all_for_ui=history&maximumRecords=3&startRecord=4
+Dataene kommer fra gjestesandkassen, men hvordan får vi det til å virke med *våre* data?
+Hvis vi går tilbake til dokumentasjonen ser vi at det står
+«The base URL for SRU requests is: https://&lt;Alma domain&gt;/view/sru/&lt;institution code&gt;».
+Alma-domenet kan vi finne fra [listen over Alma-instanser](https://www.bibsys.no/direktelenker-til-alma-instansene/).
 
-Vi får ut noe data fra gjestesandkassen, men hvordan får vi det til å virke med våre data?
-Vi kan gå tilbake til dokumentasjonen, der det står «The base URL for SRU requests is: https://<Alma domain>/view/sru/<institution code>».
-Alma-domenet vårt kan vi finne fra [listen over Alma-instanser](https://www.bibsys.no/direktelenker-til-alma-instansene/).
+Vi kan f.eks. prøve med domenet `bibsys.alma.exlibrisgroup.com` og institusjonskoden `47BIBSYS_NETWORK`:
 
-Prøver med `bibsys.alma.exlibrisgroup.com` og `47BIBSYS_NETWORK`
+<https://bibsys.alma.exlibrisgroup.com/view/sru/47BIBSYS_NETWORK?version=1.2&operation=searchRetrieve&recordSchema=marcxml&query=alma.all_for_ui=history&maximumRecords=3&startRecord=4>
 
-https://bibsys.alma.exlibrisgroup.com/view/sru/47BIBSYS_NETWORK?version=1.2&operation=searchRetrieve&recordSchema=marcxml&query=alma.all_for_ui=history&maximumRecords=3&startRecord=4
+(Prøv evt. gjerne også med verdier fra din egen favorittinstitusjon!)
 
-
-Vi prøver i Python:
+Nå kan vi prøve å hente den samme URL-en i Python med `requests`-biblioteket som vi importerte i stad:
 
 ~~~
 response = requests.get('https://bibsys.alma.exlibrisgroup.com/view/sru/47BIBSYS_NETWORK?version=1.2&operation=searchRetrieve&recordSchema=marcxml&query=alma.all_for_ui=history&maximumRecords=3&startRecord=4')
 print(response.text)
 ~~~
-{: .python}
+{: .language-python}
 
-Det funka! Men det ser rotete ut. Det som følger etter spørsmålstegnet kalles
-[query string](https://en.wikipedia.org/wiki/Query_string) (spørrestreng) og
-inneholder parametre som vi sender til API-et.
-Vi vil skille disse ut ut parametrene som variabler så vi enklere kan jobbe med dem:
+Dette funker, men det er vanskelig å lese hvor det ene parameteret slutter og det neste starter.
+Parametrene er det som følger etter spørsmålstegnet, og samlet kalles det
+[query string](https://en.wikipedia.org/wiki/Query_string) (spørrestreng).
+For å gjøre koden ryddigere ønsker vi skille disse ut som variabler:
 
 ~~~
 start = 4
@@ -205,14 +212,13 @@ response = requests.get('https://bibsys.alma.exlibrisgroup.com/view/sru/47BIBSYS
 })
 print(response.text)
 ~~~
-{: .python}
+{: .language-python}
 
-Resultatet av å kjøre denne koden er nøyaktig det samme som resultatet fra å kjøre det forrige eksempelet,
-men nå har vi en kodesnutt som er lettere å bearbeide videre.
+*Resultatet* fra å kjøre denne koden er nøyaktig det samme som resultatet fra å kjøre det forrige eksempelet,
+*men* nå har vi en kodesnutt som er lettere å bearbeide videre – og det er bra!
+For å gjøre det enda lettere å bruke denne kodesnutten vil vi gjøre den om til en funksjon.
 
-Et nytt steg som kunne være naturlig nå er å gjøre kodesnutten om til en funksjon.
-
-Tips: Marker flere linjer tekst og trykk Tab for å indentere alle linjene samtidig.
+Jupyter-tips: Marker flere linjer tekst og trykk Tab for å indentere alle linjene samtidig.
 
 ~~~
 def sru_search_request(query, start=1, limit=50):
@@ -225,36 +231,39 @@ def sru_search_request(query, start=1, limit=50):
     })
     return response
 ~~~
-{: .python}
+{: .language-python}
 
 <!--
   Dette illustrerer også et lite poeng: Man skriver typisk ikke et program fra linje 1 og nedover.
   Dette er kanskje.
 -->
 
-Nå kan vi plutselig gjøre et nytt søk med bare én linje kode:
+Nå kan vi gjøre et nytt søk med bare én linje kode!
 
 ~~~
-response = sru_search_request('alma.creator="samset bjørn"')
+response = sru_search_request('alma.creator="hurum, jørn"')
 print(response.text)
 ~~~
-{: .python}
+{: .language-python}
 
-### Hjelp, hva gjør jeg med all denne XML-en?
 
-Neste spørsmål er hvordan skal vi navigere i dette havet av tekst som vi får tilbake fra API-et.
-Dette er biblioteksløyd, så vi skal finne frem et nytt verktøy,
-nemlig et bibliotek som parser XML.
-Det finnes mange forskjellige (google "python xml"), og de har ulike fordeler og ulemper.
+### Hjelp, hva gjør jeg med all denne XML-teksten?
+
+Neste spørsmål er hvordan skal vi navigere i dette havet av XML-tekst som vi får tilbake fra API-et.
+
+Dette er biblioteksløyd, så vi skal prøve et nytt verktøy, nemlig en Python-pakke som
+parser XML (parse betyr å tolke teksten og gjøre den om til et objekt vi kan jobbe med).
+
+Det finnes mange forskjellige slike pakker (google "python xml"), og de har ulike fordeler og ulemper.
 I dag skal vi bruke et kalt `xmltodict`, som gjør XML-teksten om til en såkalt dictionary (ordliste)
 eller dict, som gjør at vi kan jobbe med responsen på samme måte som vi ville gjort fra et JSON-API.
 
-> xmltodict: Hva er forresten en dict?
+> ## Apropos xmltodict, hva er egentlig en `dict`?
 > En ordbok / [dictionary](https://dbader.org/blog/python-dictionaries-maps-and-hashtables) (dict) er en sentral datatype i Python
 > (i andre programmeringsspråk ofte kalt hashmap, associated array e.a.).
 > En dict er et enkelt objekt som du kan putte ulike ting oppi,
 > og der hvert ting har en etikett, som du kan bruke til å enkelt finne tingen igjen.
-> .callout
+{: .callout}
 
 <!--
 TODO: Oppgave med dict?
@@ -268,7 +277,7 @@ Digresjon: Det finnes selvfølgelig en pakke du kan bruke for å åpne nettleser
 import webbrowser
 webbrowser.open(response.url)
 ~~~
-{: .python}
+{: .language-python}
 
 Når vi ser på XML-en ser vi at toppnivået heter "searchRetrieveResponse".
 Deretter følger "records" og "record". Denne noden er det flere av, så det er en liste.
@@ -282,26 +291,26 @@ Først må vi importere `xmltodict`:
 ~~~
 import xmltodict
 ~~~
-{: .python}
+{: .language-python}
 
 Vi ønsker å lage en liste som inneholder alle MARC-postene,
 men ikke alt det som ligger rundt. Det kan vi gjøre slik:
 
 ~~~
-xml = xmltodict.parse(response.text, force_list=['records', 'datafield', 'subfield'])
+xml = xmltodict.parse(response.text, force_list=['record', 'datafield', 'subfield'])
 
 records = []
 for rec in xml['searchRetrieveResponse']['records']['record']:
-    records.append(rec['recordData']['record'])
+    records.append(rec['recordData']['record'][0])
 ~~~
-{: .python}
+{: .language-python}
 
 I parentes: Hvis vi er nysgjerrige på hvor mange poster vi har i listen vår kan vi sjekke med `len()`-funksjonen:
 
 ~~~
 len(records)
 ~~~
-{: .python}
+{: .language-python}
 
 
 > ## Oppgave 1: Bygge om `sru_search_request`-funksjonen til å returnere en liste med MARC-poster
@@ -321,13 +330,13 @@ len(records)
 > >         'maximumRecords': limit,
 > >         'query': query,
 > >     })
-> >     xml = xmltodict.parse(response.text, force_list=['records', 'datafield', 'subfield'])
+> >     xml = xmltodict.parse(response.text, force_list=['record', 'datafield', 'subfield'])
 > >     records = []
 > >     for rec in xml['searchRetrieveResponse']['records']['record']:
 > >         records.append(rec['recordData']['record'][0])
 > >     return records
 > > ~~~
-> > {: .python}
+> > {: .language-python}
 > {: .solution}
 {: .challenge}
 
@@ -347,14 +356,14 @@ len(records)
 > > ~~~
 > > records[0]['leader']
 > > ~~~
-> > {: .python}
+> > {: .language-python}
 > >
 > > (b)
 > > ~~~
 > > for record in records:
 > >     print(record['leader'])
 > > ~~~
-> > {: .python}
+> > {: .language-python}
 > {: .solution}
 {: .challenge}
 
@@ -372,7 +381,7 @@ len(records)
 >                 if ______['@code'] == 'a':
 >                     print(subfield['#text'])
 > ~~~
-> {: .python}
+> {: .language-python}
 >
 > > ## Løsning
 > > ~~~
@@ -383,31 +392,73 @@ len(records)
 > >                 if subfield['@code'] == 'a':
 > >                     print(subfield['#text'])
 > > ~~~
-> > {: .python}
+> > {: .language-python}
 > {: .solution}
 {: .challenge}
 
 
+Skrive ut tittel og Dewey-nummer:
 
 ~~~
-from pprint import pprint
 for rec in records:
-    for field in rec['controlfield']:
-        if field['@tag'] == '001':
-            print(field['#text'])
+
+    # Det kan være lurt å tømme variablene først
+    tittel = ''
+    dewey_numre = []
+
     for field in rec['datafield']:
+
+        if field['@tag'] == '245':
+            for subfield in field['subfield']:
+                if subfield['@code'] == 'a':
+                    tittel = subfield['#text']
+
         if field['@tag'] == '082':
             for subfield in field['subfield']:
-                if subfield['@code'] == 'a'
-                print(subfield['#text'])
+                if subfield['@code'] == 'a':
+                    dewey_numre.append(subfield['#text'])
+
+    print(tittel, dewey_numre)
 ~~~
-{: .python}
+{: .language-python}
 
-Oppgave:
-b) Slå dem opp mot `https://ub-www01.uio.no/microservices/dewey_heading.php?number=401.4`
-eller http://deweysearchno.pansoft.de/webdeweysearch/rest?query=113 (funker ikke nå)
+Hvis vi bare vil ha *unike* numre kan vi gjøre om listen til et sett: `set(dewey_numre)`
 
-> ## Jobbe med MARC-poster 1
+Tenk om det fantes et API der vi kunne sende inn et Dewey-nummer og få ut klassebetegnelsen
+fra norsk Webdewey. La oss prøve det.
+
+~~~
+for rec in records:
+
+    # Det kan være lurt å tømme variablene først
+    tittel = ''
+    dewey_numre = []
+
+    for field in rec['datafield']:
+
+        if field['@tag'] == '245':
+            for subfield in field['subfield']:
+                if subfield['@code'] == 'a':
+                    tittel = subfield['#text']
+
+        if field['@tag'] == '082':
+            for subfield in field['subfield']:
+                if subfield['@code'] == 'a':
+                    dewey_numre.append(subfield['#text'])
+
+    print('Tittel:' + tittel)
+    for dewey_nummer in set(dewey_numre):
+        dewey_response = requests.get('https://ub-www01.uio.no/microservices/dewey_heading.php', params={
+            'number': dewey_nummer,
+        })
+        print('    ' + dewey_nummer + ' ' + dewey_response.text)
+~~~
+{: .language-python}
+
+
+<!-- http://deweysearchno.pansoft.de/webdeweysearch/rest?query=113 funker ikke nå -->
+
+<!-- ## Jobbe med MARC-poster 1
 > Ta utgangspunkt i koden ovenfor og lag en funksjon kalt `filter_records` som
 > returnerer poster
 
@@ -418,7 +469,7 @@ eller http://deweysearchno.pansoft.de/webdeweysearch/rest?query=113 (funker ikke
 > > ~~~
 > > print("Hello world")
 > > ~~~
-> > {: .python}
+> > {: .language-python}
 > > Mer tekst.
 > {: .solution}
 {: .challenge}
@@ -454,7 +505,7 @@ for rec in records:
     else:
         print(tittel + " har ikke omslagsbilde")
 ~~~
-{: .python}
+{: .language-python}
 
 Og en funksjon som laster ned en fil:
 
@@ -466,15 +517,21 @@ def download_file(url, filename):
             fd.write(chunk)
 
 ~~~
-{: .python}
+{: .language-python}
 
 Prøv å bruk funksjonen for å laste ned omslagsbildet.
 
 
 Ideer: Hente inn RSS fra Springer, sjekke hvilke bøker som finnes i katalogen,
 supplere med omslagsbilde..
+-->
 
+<!--
+## Andre API-er
 
+- [Wikipedia](https://en.wikipedia.org/api/rest_v1/) (ett av flere)
+- [OCLC](https://www.oclc.org/developer/home.en.html)
+- [ExLibris](http://developers.exlibrisgroup.com)
 
 Se også:
 
@@ -483,18 +540,6 @@ Se også:
 Network zone gir tilgj. for alle bibliotek, men ikke samlingsinfo:
 
 https://bibsys.alma.exlibrisgroup.com/view/sru/47BIBSYS_NETWORK?version=1.2&operation=searchRetrieve&recordSchema=marcxml&query=alma.isbn=%209788243011182
-
-
-
-
-
-
-
-
-
-
-
-
 
 Eksempler på andre API-er dere nå er klare til å utforske
 * http://api.cristin.no/
@@ -524,7 +569,7 @@ Kodeeksempel:
 ~~~
 print("Hello world")
 ~~~
-{: .python}
+{: .language-python}
 
 
 ## Byggeklosser
@@ -539,10 +584,10 @@ Vi bygger på eksisterende byggeklosser.
 > > ~~~
 > > print("Hello world")
 > > ~~~
-> > {: .python}
+> > {: .language-python}
 > > Mer tekst.
 > {: .solution}
 {: .challenge}
 
-
+-->
 
