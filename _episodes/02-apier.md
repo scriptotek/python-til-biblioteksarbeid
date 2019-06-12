@@ -43,6 +43,7 @@ keypoints:
 ### XML og JSON
 
 Nesten alle API-er returnerer data som XML og/eller JSON.
+
 `<xml>` | `{json}`
 ---|---
 utviklet i 1997 | utviklet i 2001
