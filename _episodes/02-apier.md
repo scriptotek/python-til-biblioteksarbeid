@@ -135,10 +135,82 @@ Når vi bruker et API får vi derimot ut data i et maskinvennlig format (typisk 
 API-er er nesten alltid dokumenterte (selv om kvaliteten på dokumentasjonen kan variere)
 og de skal i utgangspunktet ikke endre seg uten forvarsel.
 
-API-er brukes ikke bare til å hente ut data, men også endre data.
+API-er brukes ikke bare for å hente ut data, men også for å endre data.
 Dette krever en eller annen form for autentisering, f.eks. en hemmelig nøkkel som man legger ved hver forespørsel.
 
-Alt dette er bra!
+
+# Hente data fra Cristin-API-et
+
+Hvis du googler "api cristin" kommer du til <http://api.cristin.no/>
+
+<!--Dette er det nye Cristin-API-et, men det er ikke helt ferdig.
+Foreløpig får du ikke ut vitenskapelige publikasjoner – som jo er det morsomste!
+Så vi bruker det gamle API-et, som er dokumentert her:
+<https://www.cristin.no/ressurser/dokumentasjon/web-service/>
+-->
+
+## Noen eksempler
+
+Vi kan f.eks. se på bøker utgitt av en bestemt person med ID 22846. Hvem er det? Prøv og se:
+<https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&format=json>
+
+La oss så bruke `requests` for å hente inn det samme resultatet med Python:
+
+~~~
+response = requests.get('https://api.cristin.no/ws/hentVarbeiderPerson', params={
+  'lopenr': '22846',
+  'fra': '1999',
+  'til': '9999',
+  'hovedkategori': 'BOK',
+  'format': 'json',
+})
+~~~
+{: .language-python}
+
+Dette API-et støtter både XML og JSON, men her ber vi om å få JSON fordi det er enklest å jobbe med, og vi lærer noe nytt.
+I stad brukte vi `xmltodict`-pakken for å parse XML.
+Nå skal vi bruke `json`-pakken for å parse JSON.
+
+~~~
+import json
+data = json.loads(response.text)
+~~~
+{: .language-python}
+
+Dette er igjen et object av type `dict`.
+For å få et inntrykk av JSON-strukturen kan det enkleste være å bruke Chrome.
+Når vi har funnet ut hva vi er ute etter, kan vi hente det ut:
+
+~~~
+for resultat in data['forskningsresultat']:
+    print(resultat['fellesdata']['ar'], resultat['fellesdata']['tittel'])
+~~~
+{: .language-python}
+
+
+
+* Den nyeste boka hens:
+  <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&utplukk=nyeste&maksantall=1&format=json>
+
+* Artiklene hens:
+  <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=TIDSSKRIFTPUBL&format=json>
+
+* Nyeste 10 artikler:
+  <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=TIDSSKRIFTPUBL&utplukk=nyeste&maksantall=1&format=json>
+
+* De 10 nyeste bøkene fra personer med UiO-tilknytning (UiO har institusjonsnr 185. For andre institusjoner, se f.eks. [denne PDF-en](https://www.cristin.no/statistikk-og-rapporter/nvi-rapportering/tidligere-ar/nvi-resultater2015/uh-nvi2015.pdf)):
+  <https://api.cristin.no/ws/hentVarbeidSted?instnr=185&utplukk=nyeste&maksantall=10&&hovedkategori=BOK&format=json>
+
+
+Her er et eksempel på hvordan data fra Cristin-APIet presenteres på UiOs nettsider for å vise de nyeste artiklene fra et bestemt forskningssenter:
+<https://www.med.uio.no/klinmed/forskning/sentre/seraf/publikasjoner/cristin/>
+
+<!--
+instnr=
+(NTNU=194, UiB=184, UiO=185, UiTø=186, BI = 584).
+Alle institusjoners nr:
+-->
+
 
 # Hente bibliografiske data fra API-et til et biblioteksystem
 
@@ -457,78 +529,7 @@ for rec in records:
 {: .language-python}
 
 
-# Hvis vi har tid: Cristin-API-et
-
-Hvis du googler "api cristin" kommer du fort til <http://api.cristin.no/>.
-Dette er det nye Cristin-API-et, men det er ikke helt ferdig.
-Foreløpig får du ikke ut vitenskapelige publikasjoner – som jo er det morsomste!
-Så vi bruker det gamle API-et, som er dokumentert her:
-<https://www.cristin.no/ressurser/dokumentasjon/web-service/>
-
-### Noen eksempler
-
-Vi kan f.eks. se på bøker utgitt av en bestemt person med ID 22846. Hvem er det? Prøv og se:
-<https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&format=json>
-
-La oss så bruke `requests` for å hente inn det samme resultatet med Python:
-
-~~~
-response = requests.get('https://api.cristin.no/ws/hentVarbeiderPerson', params={
-  'lopenr': '22846',
-  'fra': '1999',
-  'til': '9999',
-  'hovedkategori': 'BOK',
-  'format': 'json',
-})
-~~~
-{: .language-python}
-
-Dette API-et støtter både XML og JSON, men her ber vi om å få JSON fordi det er enklest å jobbe med, og vi lærer noe nytt.
-I stad brukte vi `xmltodict`-pakken for å parse XML.
-Nå skal vi bruke `json`-pakken for å parse JSON.
-
-~~~
-import json
-data = json.loads(response.text)
-~~~
-{: .language-python}
-
-Dette er igjen et object av type `dict`.
-For å få et inntrykk av JSON-strukturen kan det enkleste være å bruke Chrome.
-Når vi har funnet ut hva vi er ute etter, kan vi hente det ut:
-
-~~~
-for resultat in data['forskningsresultat']:
-    print(resultat['fellesdata']['ar'], resultat['fellesdata']['tittel'])
-~~~
-{: .language-python}
-
-
-
-* Den nyeste boka hens:
-  <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&utplukk=nyeste&maksantall=1&format=json>
-
-* Artiklene hens:
-  <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=TIDSSKRIFTPUBL&format=json>
-
-* Nyeste 10 artikler:
-  <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=TIDSSKRIFTPUBL&utplukk=nyeste&maksantall=1&format=json>
-
-* De 10 nyeste bøkene fra personer med UiO-tilknytning (UiO har institusjonsnr 185. For andre institusjoner, se f.eks. [denne PDF-en](https://www.cristin.no/statistikk-og-rapporter/nvi-rapportering/tidligere-ar/nvi-resultater2015/uh-nvi2015.pdf)):
-  <https://api.cristin.no/ws/hentVarbeidSted?instnr=185&utplukk=nyeste&maksantall=10&&hovedkategori=BOK&format=json>
-
-
-Her er et eksempel på hvordan data fra Cristin-APIet presenteres på UiOs nettsider for å vise de nyeste artiklene fra et bestemt forskningssenter:
-<https://www.med.uio.no/klinmed/forskning/sentre/seraf/publikasjoner/cristin/>
-
-<!--
-instnr=
-(NTNU=194, UiB=184, UiO=185, UiTø=186, BI = 584).
-Alle institusjoners nr:
--->
-
-
-
+## I kombinasjon med Dewey-API-et
 
 <!-- http://deweysearchno.pansoft.de/webdeweysearch/rest?query=113 funker ikke nå -->
 
