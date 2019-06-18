@@ -6,30 +6,36 @@ questions:
 - Hvordan kan jeg hente ut data fra et API?
 objectives:
 - Kunne kommunisere med et API ved hjelp av `requests`-pakken
-- Kunne orientere seg i og trekke ut data fra XML- og JSON-responsobjekter.
+- Kunne orientere seg i og trekke ut data fra JSON- og XML-responsobjekter.
 keypoints:
 - API-er (programmeringsgrensesnitt) er en annen inngang til et system enn den du gjerne bruker til vanlig.
-- API-er kommuniserer over HTTP og du kan bruke et hvilket som helst programmeringsspråk for å snakke med dem.
+- API-er kommuniserer over HTTP og du kan bruke et hvilket som helst programmeringsspråk
+  for å snakke med dem.
 - API-er utveksler data i programmeringsvennlige formater, typisk JSON og/eller XML.
-- API-er er vanligvis stabile (endrer seg ikke uten forvarsel), i motsetning til vanlige nettsider som endrer seg uten forvarsel.
+- API-er er vanligvis stabile (endrer seg ikke uten forvarsel),
+  i motsetning til vanlige nettsider, som typisk ikke er det.
+ som endrer seg uten forvarsel.
 - API-er er vanligvis dokumenterte, men det kan være mye ny terminologi å forholde seg til.
-
 ---
+
+<!-- *Egentlig* snakker vi bare om web-API-er. Trenger vi å presisere/nevne det? -->
 
 # Hva er et API?
 
-- API (application programming interface) eller også *programmeringsgrensesnitt* på godt norsk –
-  et grensesnitt mot et system (f.eks biblioteksystemet ditt).
-    - I praksis skal vi bare se på web-API-er, altså API-er vi snakker med over internett.
-      Det finnes også API-er mellom programmer og annet på maskinen din.
-    - Hvis dere leser API-dokumentasjon kommer dere fort over betegnelsen «REST» eller «RESTful».
-      De aller, aller fleste API-er følger disse prinsippene i større eller mindre grad i dag,
-      og det er ikke noe spesielt spennende ved dem egentlig.
-    - Java-utviklere liker å snakke om "web service" (webtjeneste).
-      Tenk på det som et synonym for API.
-- API-er er som regel mye mer stabilt over tid enn selve systemene bak.
-- API-er er som regel dokumenterte.
-- Åpner for å kunne automatisere og trekke ut data fra ulike systemer og kombinere dem
+Et API (application programming interface eller *programmeringsgrensesnitt* på godt norsk)
+
+- er et grensesnitt mot et system (f.eks biblioteksystemet ditt) som du kan kommunisere med på en veldefinert måte.
+  - I praksis skal vi bare se på web-API-er, altså API-er vi snakker med over internett.
+    Det finnes også API-er mellom programmer og andre komponenter på maskinen din.
+  - Hvis dere leser API-dokumentasjon kommer dere fort over betegnelsen «REST» eller «RESTful».
+    De aller, aller fleste API-er følger disse prinsippene i større eller mindre grad i dag,
+    og det er ikke lenger noe spesielt spennende ved det.
+  - Kalles også "web services" (webtjenester).
+- er typisk langt mer stabilt over tid enn selve systemet bak.
+  I prinsippet kan man bytte ut hele systemet bak og beholde det samme API-et.
+- er som regel dokumentert.
+- åpner for å enklere kunne automatisere samhandling med et system,
+  og for å trekke ut data fra ulike systemer og kombinere dem.
 
 ![API](https://scriptotek.github.io/python-til-biblioteksarbeid/fig/api-figur.png)
 
@@ -67,10 +73,10 @@ import requests
 {: .language-python}
 
 HTTP-forespørsler er ekstremt lite mystisk – det er det vi gjør hver gang vi henter en nettside.
-For å illustrere dette kan vi begynne med å hente forsiden til BI med `requests` slik:
+For å illustrere dette kan vi begynne med å hente forsiden til Cristin med `requests` slik:
 
 ~~~
-requests.get('http://www.bi.no')
+requests.get('http://www.cristin.no')
 ~~~
 {: .language-python}
 
@@ -82,7 +88,7 @@ Det vi får ut igjen fra `get()`-funksjonen er et responsobjekt.
 For å kunne bruke det videre «putter vi det i en variabel» som vi kaller "response":
 
 ~~~
-response = requests.get('http://www.bi.no')
+response = requests.get('http://www.cristin.no')
 ~~~
 {: .language-python}
 
@@ -139,9 +145,11 @@ API-er brukes ikke bare for å hente ut data, men også for å endre data.
 Dette krever en eller annen form for autentisering, f.eks. en hemmelig nøkkel som man legger ved hver forespørsel.
 
 
-# Hente data fra Cristin-API-et
+# Hente data fra et API
 
-Hvis du googler "api cristin" kommer du til <http://api.cristin.no/>
+Som eksempel bruker vi Cristin-API-et, hvorfra en kan hente ut norske forskningsresultater.
+Hvis du googler "api cristin" kommer du til <http://api.cristin.no/>,
+som er et ganske ryddig og greit API som vi skal se litt på.
 
 <!--Dette er det nye Cristin-API-et, men det er ikke helt ferdig.
 Foreløpig får du ikke ut vitenskapelige publikasjoner – som jo er det morsomste!
@@ -149,9 +157,19 @@ Så vi bruker det gamle API-et, som er dokumentert her:
 <https://www.cristin.no/ressurser/dokumentasjon/web-service/>
 -->
 
+
+
 ## Noen eksempler
 
 Vi kan f.eks. se på bøker utgitt av en bestemt person med ID 22846. Hvem er det? Prøv og se:
+
+<https://api.cristin.no/v2/results?contributor=22846&published_since=1999&published_before=1999&category=POPULARBOOK>
+
+For å studere strukturen i en nettleseren, kan det være en fordel å installere
+et nettlesertillegg som f.eks. JSON Formatter for Chrome.
+
+---
+
 <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&format=json>
 
 La oss så bruke `requests` for å hente inn det samme resultatet med Python:
