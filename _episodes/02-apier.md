@@ -163,50 +163,46 @@ Så vi bruker det gamle API-et, som er dokumentert her:
 
 Vi kan f.eks. se på bøker utgitt av en bestemt person med ID 22846. Hvem er det? Prøv og se:
 
-<https://api.cristin.no/v2/results?contributor=22846&published_since=1999&published_before=1999&category=POPULARBOOK>
+<https://api.cristin.no/v2/results?contributor=22846&published_since=2018&category=POPULARBOOK>
 
-For å studere strukturen i en nettleseren, kan det være en fordel å installere
-et nettlesertillegg som f.eks. JSON Formatter for Chrome.
+For å enklere kunne navigere i JSON-strukturen direkte i nettleseren,
+går det an å installere et nettlesertillegg, som f.eks. [JSON Formatter for
+Chrome](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa).
 
----
+En liten ulempe med dette API-et er at en må gjøre et nytt oppslag for å få ut navn på
+forfatterne/bidragsyterne, f.eks.:
 
-<https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&format=json>
+<https://api.cristin.no/v2/results/1648497/contributors>
+
 
 La oss så bruke `requests` for å hente inn det samme resultatet med Python:
 
 ~~~
-response = requests.get('https://api.cristin.no/ws/hentVarbeiderPerson', params={
-  'lopenr': '22846',
-  'fra': '1999',
-  'til': '9999',
-  'hovedkategori': 'BOK',
-  'format': 'json',
-})
+response = requests.get('https://api.cristin.no/v2/results?contributor=22846&published_since=2018&category=POPULARBOOK')
 ~~~
 {: .language-python}
 
-Dette API-et støtter både XML og JSON, men her ber vi om å få JSON fordi det er enklest å jobbe med, og vi lærer noe nytt.
-I stad brukte vi `xmltodict`-pakken for å parse XML.
-Nå skal vi bruke `json`-pakken for å parse JSON.
+For å tolke JSON-dataene vi får i retur, kan vi kalle funksjonen `json()` på respons-objektet, slik:
 
 ~~~
-import json
-data = json.loads(response.text)
+results = response.json()
 ~~~
 {: .language-python}
 
-Dette er igjen et object av type `dict`.
-For å få et inntrykk av JSON-strukturen kan det enkleste være å bruke Chrome.
-Når vi har funnet ut hva vi er ute etter, kan vi hente det ut:
+For å få oversikt over JSON-strukturen, kan det enkleste være å se på den i Chrome
+(eller lese dokumentasjonen til API-et).
+Når vi har funnet ut hva vi er ute etter, f.eks. publiseringsår og tittel,
+kan vi hente det ut slik:
 
 ~~~
-for resultat in data['forskningsresultat']:
-    print(resultat['fellesdata']['ar'], resultat['fellesdata']['tittel'])
+for result in results:
+    print(result['year_published'], resultat['title']['no'])
 ~~~
 {: .language-python}
 
+Her har vi brukt en for-løkke (*for loop*) for å gå gjennom hvert resultat.
 
-
+<!--
 * Den nyeste boka hens:
   <https://api.cristin.no/ws/hentVarbeiderPerson?lopenr=22846&fra=1999&til9999&hovedkategori=BOK&utplukk=nyeste&maksantall=1&format=json>
 
@@ -218,7 +214,7 @@ for resultat in data['forskningsresultat']:
 
 * De 10 nyeste bøkene fra personer med UiO-tilknytning (UiO har institusjonsnr 185. For andre institusjoner, se f.eks. [denne PDF-en](https://www.cristin.no/statistikk-og-rapporter/nvi-rapportering/tidligere-ar/nvi-resultater2015/uh-nvi2015.pdf)):
   <https://api.cristin.no/ws/hentVarbeidSted?instnr=185&utplukk=nyeste&maksantall=10&&hovedkategori=BOK&format=json>
-
+-->
 
 Her er et eksempel på hvordan data fra Cristin-APIet presenteres på UiOs nettsider for å vise de nyeste artiklene fra et bestemt forskningssenter:
 <https://www.med.uio.no/klinmed/forskning/sentre/seraf/publikasjoner/cristin/>
