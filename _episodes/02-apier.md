@@ -228,7 +228,7 @@ Alle institusjoners nr:
 
 # Hente bibliografiske data fra API-et til et biblioteksystem
 
-Som eksempel på API skal vi hente ut bibliografiske poster fra et API
+Vi skal se litt på hvordan vi kan hente ut bibliografiske poster fra et SRU-API.
 
 > ## [SRU](http://www.loc.gov/standards/sru/)
 > SRU er en standard søkeprotokoll fra Library of Congress som så godt som
@@ -543,9 +543,12 @@ for rec in records:
 {: .language-python}
 
 
+
+<!--
+
 ## I kombinasjon med Dewey-API-et
 
-<!-- http://deweysearchno.pansoft.de/webdeweysearch/rest?query=113 funker ikke nå -->
+ http://deweysearchno.pansoft.de/webdeweysearch/rest?query=113 funker ikke nå -->
 
 <!-- ## Jobbe med MARC-poster 1
 > Ta utgangspunkt i koden ovenfor og lag en funksjon kalt `filter_records` som
