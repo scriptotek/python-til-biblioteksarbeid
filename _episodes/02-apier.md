@@ -151,6 +151,9 @@ Som eksempel bruker vi Cristin-API-et, hvorfra en kan hente ut norske forsknings
 Hvis du googler "api cristin" kommer du til <http://api.cristin.no/>,
 som er et ganske ryddig og greit API som vi skal se litt på.
 
+Se også [denne Jupyter-notatblokken på Google Colab](https://colab.research.google.com/drive/1iwUNiDdZQxohUUHXxPRmASN7ERpQLc55) som vi brukte på Virak 2019 for å
+vise hvordan vi kan jobbe mot Cristin-API-et med Python.
+
 <!--Dette er det nye Cristin-API-et, men det er ikke helt ferdig.
 Foreløpig får du ikke ut vitenskapelige publikasjoner – som jo er det morsomste!
 Så vi bruker det gamle API-et, som er dokumentert her:
