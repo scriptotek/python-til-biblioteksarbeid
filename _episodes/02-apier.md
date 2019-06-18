@@ -178,7 +178,7 @@ forfatterne/bidragsyterne, f.eks.:
 La oss så bruke `requests` for å hente inn det samme resultatet med Python:
 
 ~~~
-response = requests.get('https://api.cristin.no/v2/results?contributor=22846&published_since=2018&category=POPULARBOOK')
+response = requests.get('https://api.cristin.no/v2/results?contributor=22846&published_since=2010&category=POPULARBOOK')
 ~~~
 {: .language-python}
 
@@ -196,7 +196,7 @@ kan vi hente det ut slik:
 
 ~~~
 for result in results:
-    print(result['year_published'], resultat['title']['no'])
+    print(result['year_published'], result['title'])
 ~~~
 {: .language-python}
 
